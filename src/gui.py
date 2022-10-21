@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-import functions
+import src.functions as functions
 
 HEADER = ("Latin Modern Mono", 20)
 BUTTON = ("Latin Modern Mono", 15)

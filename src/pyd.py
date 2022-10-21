@@ -55,13 +55,9 @@ def main():
                 directory = values["directory"]
 
             if "playlist" in values["link"]:
-                window.Hide()
-                functions.downloadAudio(values["link"], directory)
-                window.UnHide()
+                audio_dl(values["link"], directory, window)
             else:
-                window.Hide()
-                functions.download_single_audio(values["link"], directory)
-                window.UnHide()
+                single_vid(values["link"], directory, window)
 
         elif event == "video":
             if not (values["directory"].endswith("/")):
@@ -70,13 +66,9 @@ def main():
                 directory = values["directory"]
 
             if "playlist" in values["link"]:
-                window.Hide()
-                functions.downloadVideo(values["link"], directory)
-                window.UnHide()
+                video_dl(values["link"], directory, window)
             else:
-                window.Hide()
-                functions.download_single_video(values["link"], directory)
-                window.UnHide()
+                single_vid(values["link"], directory, window)
         
         elif event == sg.WIN_CLOSED:
             break

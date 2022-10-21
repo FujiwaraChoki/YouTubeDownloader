@@ -1,0 +1,7 @@
+PIL
+pytube
+ffmpy
+termcolor
+PySimpleGUI
+requests
+pyinstaller

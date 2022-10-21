@@ -1,6 +1,6 @@
 #!/bin/bash
 
-from pytube import Playlist
+from pytube import Playlist, YouTube
 import ffmpy
 from termcolor import colored
 import os
@@ -50,7 +50,7 @@ def downloadAudio(link, directory):
         new_filename = directory + audioTitle + '.mp3'
         default_filename = directory + audioTitle + '.mp4'
 
-        print(colored('Title : {}\nURL : {}\n\n'.format(video.title, video.watch_url), 'yellow'))
+        print(colored('{}\nURL : {}\n\n'.format(video.title, video.watch_url), 'yellow'))
         ff = ffmpy.FFmpeg(
             inputs={default_filename : None},
             outputs={new_filename : None}
@@ -70,7 +70,7 @@ def downloadVideo(link, directory):
             video.title = video.title.replace(" ", "_").replace("//", "_").replace("/", "_")
         video.title = video.title.replace(" ", "_").replace("/", "_")
 
-        print(colored('Title : {}\nURL : {}\n\n'.format(video.title, video.watch_url), 'yellow'))
+        print(colored('{}\nURL : {}\n\n'.format(video.title, video.watch_url), 'yellow'))
         video.streams.\
             filter(type='video', progressive=True, file_extension='mp4').\
             order_by('resolution').\
@@ -80,3 +80,45 @@ def downloadVideo(link, directory):
         download_page.close()
         print(colored("Downloaded : {} with url : {}".format(video.title, video.watch_url), 'green'))
     sg.Popup("Downloaded all videos in the playlist.")
+
+def download_single_video(link, directory):
+    video = YouTube(link)
+    download_page = downloading(video.title, video.description, video.watch_url, video.thumbnail_url)
+    if "//" in video.title or "/" in video.title or " " in video.title:
+        video.title = video.title.replace(" ", "_").replace("//", "_").replace("/", "_")
+    video.title = video.title.replace(" ", "_").replace("/", "_")
+
+    print(colored('{}\nURL : {}\n\n'.format(video.title, video.watch_url), 'yellow'))
+    video.streams.\
+        filter(type='video', progressive=True, file_extension='mp4').\
+        order_by('resolution').\
+        desc().\
+        first().\
+        download(directory)
+    download_page.close()
+    print(colored("Downloaded : {} with url : {}".format(video.title, video.watch_url), 'green'))
+    sg.Popup("Downloaded the video.")
+
+def download_single_audio(link, directory):
+    video = YouTube(link)
+    download_page = downloading(video.title, video.description, video.watch_url, video.thumbnail_url)
+    if "//" in video.title or "/" in video.title or " " in video.title:
+        video.title = video.title.replace(" ", "_").replace("//", "_").replace("/", "_")
+    audio = video.streams.get_audio_only()
+    audio.download(filename=video.title + ".mp4", output_path=directory)
+    audioTitle = audio.title
+
+    new_filename = directory + audioTitle + '.mp3'
+    default_filename = directory + audioTitle + '.mp4'
+
+    print(colored('{}\nURL : {}\n'.format(video.title, video.watch_url), 'yellow'))
+    ff = ffmpy.FFmpeg(
+        inputs={default_filename : None},
+        outputs={new_filename : None}
+    )
+    ff.run()
+    download_page.close()
+    print(colored("Downloaded : {} with url : {}".format(video.title, video.watch_url), 'green'))
+    command = "rm -rf " + directory + "'*.mp4'"
+    os.system(command)
+    sg.Popup("Downloaded the audio.")
